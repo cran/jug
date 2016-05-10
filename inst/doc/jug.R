@@ -5,6 +5,7 @@
 #    get("/", function(req, res, err){
 #      "Hello World!"
 #    }) %>%
+#    simple_error_handler() %>%
 #    serve_it()
 
 ## ---- eval=FALSE---------------------------------------------------------

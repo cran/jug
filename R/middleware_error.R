@@ -5,10 +5,8 @@
 #' @param to_cat_or_not_to_cat the argument says it all
 #'
 #' @export
-#' @import infuser
 simple_error_handler<-function(jug, path=NULL, to_cat_or_not_to_cat="cat"){
   use(jug, path = NULL, function(req, res, err){
-    print("err")
     res$content_type("text/html")
 
     if(err$occurred){
@@ -17,7 +15,7 @@ simple_error_handler<-function(jug, path=NULL, to_cat_or_not_to_cat="cat"){
 
       if(getOption("jug.verbose")) cat("ERROR:\n", errs_string, "\n")
 
-      infuse(system.file("html_templates", "500.html", package="jug"),
+      infuser::infuse(system.file("html_templates", "500.html", package="jug"),
              errs=errs_string)
     } else {
       res$status=404L
@@ -26,7 +24,7 @@ simple_error_handler<-function(jug, path=NULL, to_cat_or_not_to_cat="cat"){
                   '<img src="http://thecatapi.com/api/images/get?format=src&type=gif">',
                   "")
 
-      infuse(system.file("html_templates", "404.html", package="jug"),
+      infuser::infuse(system.file("html_templates", "404.html", package="jug"),
              cat=cat)
     }
   })
