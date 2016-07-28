@@ -18,7 +18,6 @@ RawTestRequest<-R6Class("RawTestRequest", public=list(
     SERVER_PORT = "8080",
     REMOTE_PORT = "60144",
     PATH_INFO = "/",
-    HTTP_CONTENT_TYPE = "application/x-www-form-urlencoded",
     REMOTE_ADDR = "127.0.0.1",
     CONTENT_TYPE = "application/x-www-form-urlencoded",
     rook.url_scheme = "http",
@@ -35,11 +34,14 @@ RawTestRequest<-R6Class("RawTestRequest", public=list(
   path=function(path) self$req$PATH_INFO<-path,
   method=function(method) self$req$REQUEST_METHOD<-method,
   query_string=function(qstring) self$req$QUERY_STRING<-qstring,
-  post_data=function(post_data){
-    self$req$rook.input$read_lines=function() return(post_data)
+  body=function(body){
+    self$req$rook.input$read_lines=function() return(body)
     },
-  set_header=function(key, value){
-    self$req[[paste0("HTTP_", toupper(key))]]<-value
+  set_header=function(key, value, prefix = "HTTP_"){
+    self$req[[paste0(prefix, toupper(key))]]<-value
+  },
+  get_header=function(key, prefix = "HTTP_"){
+    self$req[[paste0(prefix, toupper(key))]]
   },
   print=function(...){
     cat("A RawTestRequest instance\n")

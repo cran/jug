@@ -4,7 +4,7 @@
 \alias{use}
 \title{Function to add request method insensitive middleware}
 \usage{
-use(jug, path, ...)
+use(jug, path, ..., method = NULL)
 }
 \arguments{
 \item{jug}{the jug object}
@@ -12,6 +12,8 @@ use(jug, path, ...)
 \item{path}{the path to bind to}
 
 \item{...}{functions (order matters) to bind to the path (will receive the params \code{req}, \code{res} and \code{err})}
+
+\item{method}{the method to bind to, defauts to \code{NULL}}
 }
 \description{
 Function to add request method insensitive middleware

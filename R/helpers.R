@@ -39,60 +39,20 @@ match_path<-function(pattern, path, ...) {
 }
 
 
-#' Helper function to deparse query params
+#' Parse the params passed by the request
 #'
-#' @param query_string the query string
-#'
-#' @export
-parse_query<-function(query_string){
-  params_list<-list()
-
-  if(length(query_string)>0){
-    query_string<-gsub("^\\?", "", query_string, perl=TRUE)
-
-    rex_res<-
-      stringi::stri_match_all(query_string, regex="([^?=&]+)(=([^&]*))?")[[1]]
-
-    if(!any(is.na(rex_res))){
-      params<-matrix(rex_res[,c(2,4)], ncol=2)
-
-      params_list<-
-        as.list(params[,2])
-
-      names(params_list)<-
-        params[,1]
-
-    }
-
-  }
-
-  params_list
-}
-
-
-
-#' Parse the post data
-#'
-#' @param env the rook req environment
+#' @param req the rook req environment
+#' @param body the parsed body
+#' @param query_string a query string
 #' @param content_type the mime type
-parse_post_data<-function(env, content_type){
-
-  if(grepl("json", content_type)){
-    post_data<-env$rook.input$read_lines()
-
-    if(length(post_data)>0) {
-      jsonlite::fromJSON(post_data)
-
-    }
-  } else if(grepl("x-www-form-urlencoded", content_type)) {
-    parse_query(env$rook.input$read_lines())
-
-  } else if(grepl("multipart/form-data", content_type)) {
-    mime::parse_multipart(env)
-
-  }
-
-
+parse_params<-function(req, body, query_string, content_type){
+  params <- list()
+  if(is.null(content_type)) return(params)
+  params <- c(params, webutils::parse_query(query_string))
+  if(grepl("json", content_type) && nchar(body)>0) params <- c(params, jsonlite::fromJSON(body, simplifyDataFrame = FALSE))
+  if(grepl("multipart", content_type)) params <- c(params, mime::parse_multipart(req))
+  if(grepl("form-urlencoded", content_type)) params <- c(params, webutils::parse_query(body))
+  params
 }
 
 

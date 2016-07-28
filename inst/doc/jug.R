@@ -1,3 +1,7 @@
+## ---- eval=FALSE, include=FALSE------------------------------------------
+#  # used to generate dev version of vignette for gh-pages branch
+#  # rmarkdown::render("vignettes/jug.Rmd", output_format="html_document", output_dir=normalizePath("..", getwd()), output_options = list(theme="journal"))
+
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(jug)
 #  
@@ -5,7 +9,7 @@
 #    get("/", function(req, res, err){
 #      "Hello World!"
 #    }) %>%
-#    simple_error_handler() %>%
+#    simple_error_handler_json() %>%
 #    serve_it()
 
 ## ---- eval=FALSE---------------------------------------------------------
@@ -14,8 +18,10 @@
 ## ---- eval=FALSE---------------------------------------------------------
 #  install.packags("jug")
 
-## ---- warning=FALSE, message=FALSE---------------------------------------
+## ------------------------------------------------------------------------
 library(jug)
+
+## ---- warning=FALSE, message=FALSE---------------------------------------
 jug()
 
 ## ---- eval=FALSE---------------------------------------------------------

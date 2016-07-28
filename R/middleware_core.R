@@ -52,7 +52,7 @@ MiddlewareHandler<-
                     )
 
                   if('try-error' %in% class(body)){
-                    # process it further (will be catched by errorhandler)
+                    # process it further (should be catched by errorhandler)
                     err$set(as.character(body))
                     body<-NULL
                   }
@@ -69,6 +69,9 @@ MiddlewareHandler<-
               if(getOption("jug.verbose")){
                 cat(toupper(req$protocol), "|", req$path,"-", req$method, "-", res$status, "\n" ,sep = " ")
               }
+
+              # check for empty body after full processing and do a clean stop
+              if(is.null(res$body)) stop("Request not handled or no body set by any middleware")
 
               res$structured(req$protocol)
             }
@@ -185,11 +188,12 @@ delete<-function(jug, path, ...){
 #' @param jug the jug object
 #' @param path the path to bind to
 #' @param ... functions (order matters) to bind to the path (will receive the params \code{req}, \code{res} and \code{err})
+#' @param method the method to bind to, defauts to \code{NULL}
 #'
 #' @seealso \code{\link{post}}, \code{\link{put}}, \code{\link{delete}}, \code{\link{get}}, \code{\link{ws}}
 #' @export
-use<-function(jug, path, ...){
-  lapply(list(...), function(mw_func) add_middleware(jug, mw_func, path, method=NULL))
+use<-function(jug, path, ..., method=NULL){
+  lapply(list(...), function(mw_func) add_middleware(jug, mw_func, path, method=method))
 
   jug
 }
