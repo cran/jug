@@ -104,3 +104,11 @@ jug()
 #    serve_static_files() %>%
 #    serve_it()
 
+## ---- eval=FALSE---------------------------------------------------------
+#  jug() %>%
+#    cors() %>%
+#    get("/", function(req, res, err){
+#      "Hello World!"
+#    }) %>%
+#    serve_it()
+
