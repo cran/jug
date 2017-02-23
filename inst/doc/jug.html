@@ -12,7 +12,7 @@
 
 <meta name="author" content="Bart Smeets" />
 
-<meta name="date" content="2016-09-15" />
+<meta name="date" content="2017-02-23" />
 
 <title>Jug</title>
 
@@ -70,11 +70,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Jug</h1>
 <h4 class="author"><em>Bart Smeets</em></h4>
-<h4 class="date"><em>2016-09-15</em></h4>
+<h4 class="date"><em>2017-02-23</em></h4>
 
 
 
-<p><em>generated using Jug version 0.1.4</em></p>
+<p><em>generated using Jug version 0.1.6</em></p>
 <div id="hello-world" class="section level2">
 <h2>Hello World!</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(jug)
@@ -175,9 +175,9 @@ get test 1,2,3 on path /my_path</code></pre>
 <p>Opening a connection to <code>ws://127.0.0.1:8080/echo_message</code> and sending e.g. the message <code>test</code> to it will then return the value <code>test</code>.</p>
 <p><strong>Please note that websocket support is experimental at this stage.</strong></p>
 </div>
-<div id="including-elsewhere-defined-middleware" class="section level3">
-<h3>Including elsewhere defined middleware</h3>
-<p>In order to make you code more modular, you can include elsewhere defined middleware into your Jug instance. To do this you can use a combination of the <code>collector()</code> and <code>include()</code> functions.</p>
+<div id="including-elsewhere-defined-middleware-chains" class="section level3">
+<h3>Including elsewhere defined middleware chains</h3>
+<p>In order to make you code more modular, you can include elsewhere defined middleware chains into your Jug instance. To do this you can use a combination of the <code>collector()</code> and <code>include()</code> functions.</p>
 <p>Below a <code>collector</code> is defined locally (in the same R script) and <code>include</code>d.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"> collected_mw&lt;-
 <span class="st">    </span><span class="kw">collector</span>() %&gt;%
@@ -275,6 +275,33 @@ hello Bart !</code></pre>
 * Connection #0 to host 127.0.0.1 left intact</code></pre>
 <p>As you see this adds some default CORS-headers. Check out <code>?cors</code> for the configuration options, note that you can also add CORS headers to a specific path by specifying the <code>path</code> parameter.</p>
 </div>
+<div id="authentication" class="section level3">
+<h3>Authentication</h3>
+<p>Currently there is only built-in support for basic authentication (check: <a href="https://www.httpwatch.com/httpgallery/authentication/" class="uri">https://www.httpwatch.com/httpgallery/authentication/</a>) through the <code>auth_basic</code> middleware function. The middleware will check the request for a valid username / password combination. If an invalid combination is passed, it will return a 401 status, a <code>WWW-Authenticate</code> header and a text body which states that there was an authentication error.</p>
+<p>First you will need to define a function that accepts <code>username</code> and <code>password</code> arguments. The funtion should return <code>TRUE</code> if the combination is valid and <code>FALSE</code> if the combination is invalid. A dummy example is shown below. Note, that this function could also check e.g. a database to validate the combo.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># dummy account checker</span>
+account_checker &lt;-<span class="st"> </span>function(username, password){
+  <span class="co"># do something to verify the username and password and return TRUE if combination OK</span>
+  <span class="kw">all</span>(username ==<span class="st"> &quot;test_user&quot;</span>, 
+      password ==<span class="st"> &quot;test_password&quot;</span>)
+}</code></pre></div>
+<p>Next you need to instantiate the <code>auth_basic</code> middleware in you middleware chain. The <code>auth_basic</code> function accepts as first parameter the username/password validation function. Below two examples are given. The first one shows how to do authentication for a specific path (<code>/test</code>).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">jug</span>() %&gt;%
+<span class="st">  </span><span class="kw">get</span>(<span class="st">&quot;/&quot;</span>, function(req, res, err){
+    <span class="st">&quot;/ req&quot;</span>
+  }) %&gt;%
+<span class="st">  </span><span class="kw">get</span>(<span class="st">&quot;/test&quot;</span>, <span class="kw">auth_basic</span>(account_checker), function(req, res, err){
+    <span class="st">&quot;/test req&quot;</span>
+  }) %&gt;%
+<span class="st">  </span><span class="kw">serve_it</span>()</code></pre></div>
+<p>The second example below shows how to activate basic authentication for all paths in the jug instance.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">jug</span>() %&gt;%
+<span class="st">  </span><span class="kw">use</span>(<span class="ot">NULL</span>, <span class="kw">auth_basic</span>(account_checker)) %&gt;%
+<span class="st">  </span><span class="kw">get</span>(<span class="st">&quot;/&quot;</span>, function(req, res, err){
+    <span class="st">&quot;/ req&quot;</span>
+  }) %&gt;%
+<span class="st">  </span><span class="kw">serve_it</span>()</code></pre></div>
+</div>
 </div>
 <div id="the-request-response-and-error-objects" class="section level2">
 <h2>The request, response and error objects</h2>
@@ -329,7 +356,7 @@ hello Bart !</code></pre>
 </div>
 <div id="starting-the-jug-instance" class="section level2">
 <h2>Starting the Jug instance</h2>
-<p>Simple call <code>serve_it()</code> at the end of your piping chain (see Hello World! example).</p>
+<p>Simply call <code>serve_it()</code> at the end of your piping chain (see Hello World! example).</p>
 </div>
 <div id="further-examples" class="section level2">
 <h2>Further examples</h2>

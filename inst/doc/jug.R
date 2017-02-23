@@ -1,6 +1,6 @@
 ## ---- eval=FALSE, include=FALSE------------------------------------------
 #  # used to generate dev version of vignette for gh-pages branch
-#  # rmarkdown::render("vignettes/jug.Rmd", output_format="html_document", output_dir=normalizePath("..", getwd()), output_options = list(theme="journal"))
+#  # rmarkdown::render("jug.Rmd", output_format="html_document", output_options = list(theme="journal"))
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(jug)
@@ -109,6 +109,32 @@ jug()
 #    cors() %>%
 #    get("/", function(req, res, err){
 #      "Hello World!"
+#    }) %>%
+#    serve_it()
+
+## ---- eval=FALSE---------------------------------------------------------
+#  # dummy account checker
+#  account_checker <- function(username, password){
+#    # do something to verify the username and password and return TRUE if combination OK
+#    all(username == "test_user",
+#        password == "test_password")
+#  }
+
+## ---- eval=FALSE---------------------------------------------------------
+#  jug() %>%
+#    get("/", function(req, res, err){
+#      "/ req"
+#    }) %>%
+#    get("/test", auth_basic(account_checker), function(req, res, err){
+#      "/test req"
+#    }) %>%
+#    serve_it()
+
+## ---- eval=FALSE---------------------------------------------------------
+#  jug() %>%
+#    use(NULL, auth_basic(account_checker)) %>%
+#    get("/", function(req, res, err){
+#      "/ req"
 #    }) %>%
 #    serve_it()
 
