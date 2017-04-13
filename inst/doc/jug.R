@@ -1,7 +1,3 @@
-## ---- eval=FALSE, include=FALSE------------------------------------------
-#  # used to generate dev version of vignette for gh-pages branch
-#  # rmarkdown::render("jug.Rmd", output_format="html_document", output_options = list(theme="journal"))
-
 ## ---- eval=FALSE---------------------------------------------------------
 #  library(jug)
 #  
@@ -136,5 +132,29 @@ jug()
 #    get("/", function(req, res, err){
 #      "/ req"
 #    }) %>%
+#    serve_it()
+
+## ------------------------------------------------------------------------
+head(mtcars)
+
+mpg_model<-
+  lm(mpg~gear+hp, data=mtcars)
+
+summary(mpg_model)
+
+## ------------------------------------------------------------------------
+predict_mpg <- function(gear, hp){
+  predict(mpg_model, 
+          newdata = data.frame(gear=as.numeric(gear), 
+                               hp=as.numeric(hp)))[[1]]
+}
+
+## ------------------------------------------------------------------------
+predict_mpg(gear = 4, hp = 80)
+
+## ---- eval=F-------------------------------------------------------------
+#  jug() %>%
+#    post("/predict-mpg", decorate(predict_mpg)) %>%
+#    simple_error_handler_json() %>%
 #    serve_it()
 

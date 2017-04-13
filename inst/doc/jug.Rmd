@@ -1,23 +1,17 @@
 ---
-title: "Jug"
+title: "Getting started with jug"
 author: "Bart Smeets"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Jug}
+  %\VignetteIndexEntry{Getting started with jug}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-_generated using Jug version `r library(jug);sessionInfo()$otherPkgs$jug$Version`_
+_generated using jug version `r library(jug);sessionInfo()$otherPkgs$jug$Version`_
 
-```{r, eval=FALSE, include=FALSE}
-# used to generate dev version of vignette for gh-pages branch
-# rmarkdown::render("jug.Rmd", output_format="html_document", output_options = list(theme="journal"))
-```
-
-
-## Hello World!
+## <a name="hello"></a>Hello World!
 
 ```{r, eval=FALSE}
 library(jug)
@@ -34,11 +28,11 @@ jug() %>%
 Serving the jug at http://127.0.0.1:8080
 ```
 
-## What is Jug?
+## What is jug?
 
-Jug is a small web development framework for R which relies heavily upon the ```httpuv``` package. It's main focus is to make building APIs for your code as easy as possible.
+jug is a small web development framework for R which relies heavily upon the ```httpuv``` package. It's main focus is to make building APIs for your code as easy as possible.
 
-Jug is not supposed to be either an especially performant nor an uber stable web framework. Other tools (and languages) might be more suited for that. It's main focus is to easily allow you to create APIs for your R code. However, the flexibility of Jug means that, in theory, you could built an extensive web framework with it.
+jug is not supposed to be either an especially performant nor an uber stable web framework. Other tools (and languages) might be more suited for that. It's main focus is to easily allow you to create APIs for your R code. However, the flexibility of jug means that, in theory, you could built an extensive web framework with it.
 
 ## Getting started
 
@@ -60,19 +54,19 @@ Load the library:
 library(jug)
 ```
 
-## The Jug instance
+## The jug instance
 
-Everything starts with a Jug instance. This instance is created by simply calling `jug()`:
+Everything starts with a jug instance. This instance is created by simply calling `jug()`:
 
 ```{r, warning=FALSE, message=FALSE}
 jug()
 ```
 
-Jug is made to work closely with the piping functionality of `magrittr` (`%>%`). The configuration of the Jug instance is set up by piping the instance through the various functions explained below.
+jug is made to work closely with the piping functionality of `magrittr` (`%>%`). The configuration of the jug instance is set up by piping the instance through the various functions explained below.
 
 ## Middleware
 
-In terms of middleware, Jug somewhat follows the specification of middleware by `Express`. In Jug, middleware is a function with access to the __request__ (`req`), __response__ (`res`) and __error__ (`err`) object.
+In terms of middleware, jug somewhat follows the specification of middleware by `Express`. In jug, middleware is a function with access to the __request__ (`req`), __response__ (`res`) and __error__ (`err`) object.
 
 Multiple middlewares can be defined. The order in which the middlewares are added matters. A request will start with being passed through the first middleware added (more specifically the functions specified in it - see next paragraph). It will continue to be passed through the added middlewares until a middleware does not return `NULL` (note: if a value is set using e.g. `res$json("foo")` the body will not be `NULL`). Whatever will be passed by that middleware will be set as the response body. 
 
@@ -176,7 +170,7 @@ __Please note that websocket support is experimental at this stage.__
 
 ### Including elsewhere defined middleware chains
 
-In order to make you code more modular, you can include elsewhere defined middleware chains into your Jug instance. To do this you can use a combination of the `collector()` and `include()` functions.
+In order to make you code more modular, you can include elsewhere defined middleware chains into your jug instance. To do this you can use a combination of the `collector()` and `include()` functions.
 
 Below a `collector` is defined locally (in the same R script) and `include`d.
 
@@ -218,7 +212,7 @@ res<-jug() %>%
 
 ### Error handling
 
-A simple error handling middleware (`simple_error_handler` / `simple_error_handler_json`) which catches unbound paths and `func` evaluation errors. If you do not implement a custom error handler, I suggest you add either of these to your Jug instance. The `simple_error_handler` returns an HTML error page while the `simple_error_handler_json` returns a JSON message.
+A simple error handling middleware (`simple_error_handler` / `simple_error_handler_json`) which catches unbound paths and `func` evaluation errors. If you do not implement a custom error handler, I suggest you add either of these to your jug instance. The `simple_error_handler` returns an HTML error page while the `simple_error_handler_json` returns a JSON message.
 
 ```{r, eval=FALSE}
 jug() %>%
@@ -241,11 +235,11 @@ $ curl 127.0.0.1:8080
 ```
 If you want to implement your own custom error handling just have a look at the code of these simple error handling middlewares.
 
-Please note that generally you would like the error handler middleware to be attached to the Jug instance after all other middleware has been specified.
+Please note that generally you would like the error handler middleware to be attached to the jug instance after all other middleware has been specified.
 
 ### Easily using your own functions
 
-The main reason Jug was created is to easily allow access to your own custom R functions. The convenience function `decorate` is built especially for this purpose.
+The main reason jug was created is to easily allow access to your own custom R functions. The convenience function `decorate` is built especially for this purpose.
 
 If you `decorate` your own function it will translate all arguments passed in the query string of the request as arguments to your function. It will also pass all headers to the function as arguments. 
 
@@ -278,7 +272,7 @@ jug() %>%
 
 The default root directory is the one returned by `getwd()` but can be specified by providing a `root_path` argument to the `serve_static_files` middleware. It transforms a bare `/` path to `index.html`.
 
-Aside from development, I do not recommend using Jug to serve static files.
+Aside from development, I do not recommend using jug to serve static files.
 
 ### CORS functionality
 
@@ -389,7 +383,7 @@ It also has a set of functions:
 - `res$content_type(type)` set your own content type (MIME)
 - `res$set_status(status)` set the status of the response
 - `res$text(body)` to explicitely set the body of the response
-- `res$json(obj)` converts an object to JSON, sets it as the body and set the correct content type
+- `res$json(obj, auto_unbox=TRUE)` converts an object to JSON, sets it as the body and set the correct content type
 - `res$plot(plot_obj, base64=TRUE)` convenience function to return a plot object as the response body, the returned plot can either be a base64 representation of the image (default) or the actual binary data
 
 ### Error (`err`) object
@@ -406,10 +400,92 @@ If there are named capture groups in the path definition, they will be attached 
 
 If a path pattern is not started with a start of string `^` regex token __or__ ended with an end of string token `$`, these will be explicitely inserted at respectively the beginning and end of the path pattern specification. For example the path pattern `/` will be converted to `^/$`.
 
-## Starting the Jug instance
+## Starting the jug instance
 
-Simply call `serve_it()` at the end of your piping chain (see Hello World! example).
+Simply call `serve_it()` at the end of your piping chain (see [Hello World!](#hello) example).
 
-## Further examples
+## Practical examples
 
-[Minimal CRUD TODO app](https://github.com/Bart6114/jug-crud-example)
+### Minimal CRUD TODO app
+
+A minimal TODO app built in Angular with a jug backend. 
+
+Clone the repository to check it out: [github.com/Bart6114/jug-crud-example](https://github.com/Bart6114/jug-crud-example)
+
+### Exposing a machine learning model
+
+Let's train (in a very simplistic way) a linear regression model on the `mtcars` dataset and assume that our objective is to predict the miles per gallon or `mpg` variable based on the inputs `gear` and `hp`.
+
+```{r}
+head(mtcars)
+
+mpg_model<-
+  lm(mpg~gear+hp, data=mtcars)
+
+summary(mpg_model)
+```
+
+As we went through a lot of hard work to end up with this model (/s), we now want to expose it through an API. This way we allow other people or applications to make predictions using this model.
+
+As a first step we need to build a minimal prediction function. 
+
+```{r}
+predict_mpg <- function(gear, hp){
+  predict(mpg_model, 
+          newdata = data.frame(gear=as.numeric(gear), 
+                               hp=as.numeric(hp)))[[1]]
+}
+```
+
+We can test the function by supplying the `gear` and `hp` arguments.
+
+```{r}
+predict_mpg(gear = 4, hp = 80)
+```
+
+Now, to expose this function as a we API, we need to build a `jug` instance. We can use the built-in `decorate` middleware to ease the integration of the `predict_mpg` function. Below, a minimal example is shown.
+
+```{r, eval=F}
+jug() %>%
+  post("/predict-mpg", decorate(predict_mpg)) %>%
+  simple_error_handler_json() %>%
+  serve_it()
+```
+```
+Serving the jug at http://127.0.0.1:8080
+```
+
+We can now send a http POST request to the `http://127.0.0.1:8080/predict-mpg` url and it will return the predicted value! It works out of the box with either the parameters in a JSON body, as `multipart/form-data` or as a `x-www-form-urlencoded`.
+
+**JSON body**
+
+```sh
+curl -X POST \
+  http://127.0.0.1:8080/predict-mpg \
+  -H 'content-type: application/json' \
+  -d '{"hp": 80, "gear": 4}'
+```
+
+**multipart form**
+
+```sh
+curl -X POST \
+  http://127.0.0.1:8080/predict-mpg \
+  -H 'content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW' \
+  -F hp=80 \
+  -F gear=4
+```
+
+**urlencode form**
+
+```sh
+curl -X POST \
+  http://127.0.0.1:8080/predict-mpg \
+  -H 'content-type: application/x-www-form-urlencoded' \
+  -d 'gear=4&hp=80'
+```
+
+
+
+
+
